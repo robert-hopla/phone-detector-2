@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 mt-10">
+        <h1 class="text-2xl font-bold text-center mb-6">📱 Phone Detector</h1>
+        
+        <div class="space-y-4">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h2 class="font-semibold text-blue-800">Device Information</h2>
+                <div id="deviceInfo" class="mt-2 text-blue-600"></div>
+            </div>
+
+            <div class="bg-green-50 p-4 rounded-lg">
+                <h2 class="font-semibold text-green-800">Browser Information</h2>
+                <div id="browserInfo" class="mt-2 text-green-600"></div>
+            </div>
+
+            <div class="bg-purple-50 p-4 rounded-lg">
+                <h2 class="font-semibold text-purple-800">Screen Information</h2>
+                <div id="screenInfo" class="mt-2 text-purple-600"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Device Information
+            const deviceInfo = document.getElementById('deviceInfo');
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            
+            // Simple device detection
+            const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(userAgent);
+            const isTablet = /iPad|Android(?!.*Mobile)/i.test(userAgent);
+            
+            let deviceType = "Desktop";
+            if (isTablet) deviceType = "Tablet";
+            else if (isMobile) deviceType = "Mobile";
+            
+            // Try to detect brand/model
+            let brand = "Unknown";
+            let model = "Unknown";
+            
+            if (userAgent.includes("iPhone")) {
+                brand = "Apple";
+                model = "iPhone";
+            } else if (userAgent.includes("iPad")) {
+                brand = "Apple";
+                model = "iPad";
+            } else if (userAgent.includes("Samsung")) {
+                brand = "Samsung";
+                model = userAgent.match(/SM-\w+/i)?.[0] || "Unknown Model";
+            } else if (userAgent.includes("Huawei")) {
+                brand = "Huawei";
+            } else if (userAgent.includes("Xiaomi")) {
+                brand = "Xiaomi";
+            }
+            
+            deviceInfo.innerHTML = `
+                <p><strong>Type:</strong> ${deviceType}</p>
+                <p><strong>Brand:</strong> ${brand}</p>
+                <p><strong>Model:</strong> ${model}</p>
+                <p><strong>Platform:</strong> ${platform}</p>
+            `;
+            
+            // Browser Information
+            const browserInfo = document.getElementById('browserInfo');
+            const browser = {
+                chrome: !!window.chrome,
+                firefox: typeof InstallTrigger !== 'undefined',
+                safari: /^((?!chrome|android).)*safari/i.test(userAgent),
+                edge: /Edge/.test(userAgent),
+                opera: /Opera/.test(userAgent)
+            };
+            
+            const browserName = Object.keys(browser).find(key => browser[key]) || "Unknown";
+            
+            browserInfo.innerHTML = `
+                <p><strong>Browser:</strong> ${browserName.charAt(0).toUpperCase() + browserName.slice(1)}</p>
+                <p><strong>User Agent:</strong> ${userAgent}</p>
+            `;
+            
+            // Screen Information
+            const screenInfo = document.getElementById('screenInfo');
+            screenInfo.innerHTML = `
+                <p><strong>Screen Width:</strong> ${window.screen.width}px</p>
+                <p><strong>Screen Height:</strong> ${window.screen.height}px</p>
+                <p><strong>Pixel Ratio:</strong> ${window.devicePixelRatio}</p>
+                <p><strong>Color Depth:</strong> ${window.screen.colorDepth}-bit</p>
+            `;
+        });
+    </script>
+</body>
+</html>
